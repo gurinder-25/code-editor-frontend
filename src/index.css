@@ -1,4 +1,8 @@
-@import "tailwindcss";
+/* Tailwind without Preflight — its reset was overriding the original styles.
+   Keep theme + utilities so Tailwind classes still work. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 html,
 body {

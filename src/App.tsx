@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { EditorScreen } from "./components/EditorScreen";
 import { StdinModal } from "./components/StdinModal";
 import { OutputScreen } from "./components/OutputScreen";
 import { useExecuteCode } from "./context/execute-code/ExecuteCodeContext";
 import { EXECUTE_STATUS } from "./context/execute-code/executeCodeTypes";
 import { useFetchLanguages } from "./context/fetch-languages/FetchLanguagesContext";
-import { getTemplate } from "./lib/templates";
+import { useFetchCodeSnippets } from "./context/fetch-code-snippets/FetchCodeSnippetsContext";
 import type { RunResult } from "./types";
 
 export default function App() {
@@ -18,14 +18,24 @@ export default function App() {
 
   const { execute, loading } = useExecuteCode();
   const { languages } = useFetchLanguages();
+  const { fetchCodeSnippet } = useFetchCodeSnippets();
 
-  // Once the languages arrive, default to the first one and load its template.
+  // Select a language and load its starter snippet from the API.
+  const selectLanguage = useCallback(
+    async (lang: string) => {
+      setLanguage(lang);
+      const snippet = await fetchCodeSnippet(lang);
+      setCode(snippet ?? "");
+    },
+    [fetchCodeSnippet],
+  );
+
+  // Once the languages arrive, default to the first one.
   useEffect(() => {
     if (languages.length > 0 && !language) {
-      setLanguage(languages[0]);
-      setCode(getTemplate(languages[0]));
+      selectLanguage(languages[0]);
     }
-  }, [languages, language]);
+  }, [languages, language, selectLanguage]);
 
   const run = async (useStdin: boolean) => {
     const stdinText = useStdin ? stdin : "";
@@ -58,10 +68,7 @@ export default function App() {
         <EditorScreen
           language={language}
           languages={languages}
-          onLanguageChange={(lang) => {
-            setLanguage(lang);
-            setCode(getTemplate(lang));
-          }}
+          onLanguageChange={selectLanguage}
           code={code}
           onCodeChange={setCode}
           onExecute={() => setShowStdin(true)}

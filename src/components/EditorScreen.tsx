@@ -189,7 +189,7 @@ export function EditorScreen({
       <div className="fab-row">
         <span className="mono shortcut-hint">⌘↵ to run</span>
         <button className="btn-dark" onClick={onExecute}>
-          <span className="mono" style={{ fontSize: 12 }}>
+          <span className="mono" style={{ fontSize: 13 }}>
             ▶
           </span>{" "}
           Execute

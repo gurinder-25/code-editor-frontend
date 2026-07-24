@@ -31,12 +31,12 @@ export function OutputScreen({ result, onBack, onRunAgain }: OutputScreenProps) 
       <div className="fab-row" style={{ gap: 12 }}>
         <button
           className="btn-outline"
-          style={{ padding: "13px 20px", borderRadius: 12, background: "#fbfbfa", boxShadow: "0 4px 14px rgba(50,50,50,0.08)" }}
+          style={{ padding: "15px 24px", fontSize: 16, borderRadius: 12, background: "#fbfbfa", boxShadow: "0 4px 14px rgba(50,50,50,0.08)" }}
           onClick={onBack}
         >
           ← Edit code
         </button>
-        <button className="btn-dark" style={{ padding: "13px 24px" }} onClick={onRunAgain}>
+        <button className="btn-dark" style={{ padding: "15px 28px" }} onClick={onRunAgain}>
           Run again
         </button>
       </div>

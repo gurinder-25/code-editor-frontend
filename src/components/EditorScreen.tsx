@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { highlight } from "../lib/highlight";
+import { LanguageSelect } from "./LanguageSelect";
 
 interface EditorScreenProps {
   language: string;
@@ -157,20 +158,7 @@ export function EditorScreen({
   return (
     <div className="screen">
       <div className="topbar">
-        <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-          <span className="lang-dot" />
-          <select
-            className="lang-select"
-            value={language}
-            onChange={(e) => onLanguageChange(e.target.value)}
-          >
-            {languages.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-        </div>
+        <LanguageSelect language={language} languages={languages} onChange={onLanguageChange} />
         <span className="mono stats">
           {code.length} chars · {lineCount} lines
         </span>

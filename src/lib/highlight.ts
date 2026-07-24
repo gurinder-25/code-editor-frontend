@@ -11,7 +11,7 @@ const PATTERN = new RegExp(
   "g",
 );
 
-export function escapeHtml(s: string): string {
+function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 

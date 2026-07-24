@@ -2,13 +2,14 @@ import { useEffect, useRef } from "react";
 
 interface Props {
   stdin: string;
+  loading?: boolean;
   onStdinChange: (value: string) => void;
   onRun: () => void;
   onSkip: () => void;
   onClose: () => void;
 }
 
-export function StdinModal({ stdin, onStdinChange, onRun, onSkip, onClose }: Props) {
+export function StdinModal({ stdin, loading = false, onStdinChange, onRun, onSkip, onClose }: Props) {
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export function StdinModal({ stdin, onStdinChange, onRun, onSkip, onClose }: Pro
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
-      onRun();
+      if (!loading) onRun();
     }
     if (e.key === "Escape") onClose();
   };
@@ -46,22 +47,23 @@ export function StdinModal({ stdin, onStdinChange, onRun, onSkip, onClose }: Pro
           />
         </div>
         <div className="modal-footer">
-          <button className="btn-ghost" onClick={onClose}>
+          <button className="btn-ghost" onClick={onClose} disabled={loading}>
             Cancel
           </button>
           <div className="modal-footer-actions">
-            <button className="btn-outline" onClick={onSkip}>
+            <button className="btn-outline" onClick={onSkip} disabled={loading}>
               Skip
             </button>
             <button
               className="btn-dark"
-              style={{ padding: "11px 22px", fontSize: 14 }}
+              style={{ padding: "11px 22px", fontSize: 14, opacity: loading ? 0.7 : 1 }}
               onClick={onRun}
+              disabled={loading}
             >
               <span className="mono" style={{ fontSize: 11 }}>
                 ▶
               </span>{" "}
-              Run
+              {loading ? "Running…" : "Run"}
             </button>
           </div>
         </div>

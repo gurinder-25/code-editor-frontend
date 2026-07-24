@@ -19,7 +19,6 @@ export function OutputScreen({ result, onBack, onRunAgain }: Props) {
           </span>
           <span className="mono run-meta">
             exit {result.exitCode} · {result.runtime}ms
-            {result.simulated ? " · simulated" : ""}
           </span>
         </div>
       </div>

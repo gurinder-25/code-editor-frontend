@@ -2,8 +2,8 @@ import { useState } from "react";
 import { EditorScreen } from "./components/EditorScreen";
 import { StdinModal } from "./components/StdinModal";
 import { OutputScreen } from "./components/OutputScreen";
-import { runJavaScript } from "./lib/jsRunner";
-import { interpret } from "./lib/interpreter";
+import { useExecuteCode } from "./context/execute-code/ExecuteCodeContext";
+import { EXECUTE_STATUS } from "./context/execute-code/executeCodeTypes";
 import { TEMPLATES } from "./lib/templates";
 import type { Language, RunResult } from "./types";
 
@@ -15,34 +15,29 @@ export default function App() {
   const [stdin, setStdin] = useState("world");
   const [result, setResult] = useState<RunResult | null>(null);
 
-  const execute = async (useStdin: boolean) => {
+  const { execute, loading } = useExecuteCode();
+
+  const run = async (useStdin: boolean) => {
     const stdinText = useStdin ? stdin : "";
-    const inputs = stdinText.length ? stdinText.split(/\r?\n/) : [];
-    const simulated = language !== "JavaScript";
+    const response = await execute({ language: language.toLowerCase(), code, stdin: stdinText });
 
-    const t0 = performance.now();
-    const outcome = simulated
-      ? interpret(code, inputs)
-      : await runJavaScript(code, inputs);
-    const runtime = Math.max(1, Math.round(performance.now() - t0));
-
-    let output: string;
-    if (outcome.error)
-      output = outcome.out.length
-        ? outcome.out.join("\n") + "\n" + outcome.error
-        : outcome.error;
-    else if (outcome.out.length === 0) output = "// program finished with no output";
-    else output = outcome.out.join("\n");
-
-    setResult({
-      output,
-      exitCode: outcome.ok ? 0 : 1,
-      status: outcome.ok ? "success" : "error",
-      runtime,
-      usedStdin: useStdin && inputs.length > 0,
-      stdin: stdinText,
-      simulated,
-    });
+    if (response) {
+      const ok = response.status === EXECUTE_STATUS.SUCCESS && response.exitCode === 0;
+      const parts = [response.stdout, response.stderr].filter(Boolean);
+      setResult({
+        output: parts.length ? parts.join("\n") : "// program finished with no output",
+        exitCode: response.exitCode,
+        status: ok ? "success" : "error",
+        runtime: response.executionTimeMs,
+      });
+    } else {
+      setResult({
+        output: "Error: execution request failed",
+        exitCode: 1,
+        status: "error",
+        runtime: 0,
+      });
+    }
     setShowStdin(false);
     setScreen("output");
   };
@@ -72,9 +67,10 @@ export default function App() {
       {showStdin && (
         <StdinModal
           stdin={stdin}
+          loading={loading}
           onStdinChange={setStdin}
-          onRun={() => execute(true)}
-          onSkip={() => execute(false)}
+          onRun={() => run(true)}
+          onSkip={() => run(false)}
           onClose={() => setShowStdin(false)}
         />
       )}

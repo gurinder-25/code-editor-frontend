@@ -13,7 +13,7 @@ export default function App() {
   const [showStdin, setShowStdin] = useState(false);
   const [language, setLanguage] = useState("");
   const [code, setCode] = useState("");
-  const [stdin, setStdin] = useState("world");
+  const [stdin, setStdin] = useState("");
   const [result, setResult] = useState<RunResult | null>(null);
 
   const { execute, loading } = useExecuteCode();

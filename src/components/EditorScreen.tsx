@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useRef } from "react";
 import { highlight } from "../lib/highlight";
-import { LANGUAGES, type Language } from "../types";
 
 interface Props {
-  language: Language;
-  onLanguageChange: (lang: Language) => void;
+  language: string;
+  languages: string[];
+  onLanguageChange: (lang: string) => void;
   code: string;
   onCodeChange: (code: string) => void;
   onExecute: () => void;
 }
 
-export function EditorScreen({ language, onLanguageChange, code, onCodeChange, onExecute }: Props) {
+export function EditorScreen({
+  language,
+  languages,
+  onLanguageChange,
+  code,
+  onCodeChange,
+  onExecute,
+}: Props) {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const hlRef = useRef<HTMLPreElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
@@ -155,9 +162,9 @@ export function EditorScreen({ language, onLanguageChange, code, onCodeChange, o
           <select
             className="lang-select"
             value={language}
-            onChange={(e) => onLanguageChange(e.target.value as Language)}
+            onChange={(e) => onLanguageChange(e.target.value)}
           >
-            {LANGUAGES.map((lang) => (
+            {languages.map((lang) => (
               <option key={lang} value={lang}>
                 {lang}
               </option>

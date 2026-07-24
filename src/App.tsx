@@ -1,25 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditorScreen } from "./components/EditorScreen";
 import { StdinModal } from "./components/StdinModal";
 import { OutputScreen } from "./components/OutputScreen";
 import { useExecuteCode } from "./context/execute-code/ExecuteCodeContext";
 import { EXECUTE_STATUS } from "./context/execute-code/executeCodeTypes";
-import { TEMPLATES } from "./lib/templates";
-import type { Language, RunResult } from "./types";
+import { useFetchLanguages } from "./context/fetch-languages/FetchLanguagesContext";
+import { getTemplate } from "./lib/templates";
+import type { RunResult } from "./types";
 
 export default function App() {
   const [screen, setScreen] = useState<"editor" | "output">("editor");
   const [showStdin, setShowStdin] = useState(false);
-  const [language, setLanguage] = useState<Language>("Python");
-  const [code, setCode] = useState(TEMPLATES.Python);
+  const [language, setLanguage] = useState("");
+  const [code, setCode] = useState("");
   const [stdin, setStdin] = useState("world");
   const [result, setResult] = useState<RunResult | null>(null);
 
   const { execute, loading } = useExecuteCode();
+  const { languages } = useFetchLanguages();
+
+  // Once the languages arrive, default to the first one and load its template.
+  useEffect(() => {
+    if (languages.length > 0 && !language) {
+      setLanguage(languages[0]);
+      setCode(getTemplate(languages[0]));
+    }
+  }, [languages, language]);
 
   const run = async (useStdin: boolean) => {
     const stdinText = useStdin ? stdin : "";
-    const response = await execute({ language: language.toLowerCase(), code, stdin: stdinText });
+    const response = await execute({ language, code, stdin: stdinText });
 
     if (response) {
       const ok = response.status === EXECUTE_STATUS.SUCCESS && response.exitCode === 0;
@@ -47,9 +57,10 @@ export default function App() {
       {screen === "editor" ? (
         <EditorScreen
           language={language}
+          languages={languages}
           onLanguageChange={(lang) => {
             setLanguage(lang);
-            setCode(TEMPLATES[lang]);
+            setCode(getTemplate(lang));
           }}
           code={code}
           onCodeChange={setCode}

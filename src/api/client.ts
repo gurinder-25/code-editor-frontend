@@ -10,6 +10,8 @@ const client = axios.create({
 const extractData = <T>(response: { data: T }) => response.data;
 
 export const api = {
+  get: <Res>(endpoint: string) => client.get<Res>(endpoint).then(extractData),
+
   post: <Req, Res>(endpoint: string, data: Req) =>
     client.post<Res>(endpoint, data).then(extractData),
 };

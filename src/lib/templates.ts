@@ -1,64 +1,38 @@
-import type { Language } from "../types";
-
 /**
- * Starter snippets shown when a language is selected. The non-JavaScript
- * ones run through the pattern-matching interpreter (see interpreter.ts),
- * so the `for i in range(n):` loop shape and print calls are kept within
- * what it actually understands.
+ * Starter snippets shown when a language is selected, keyed by the backend's
+ * language codes (see GET /api/v1/languages). Unknown languages fall back to an
+ * empty editor via getTemplate().
  */
-export const TEMPLATES: Record<Language, string> = {
-  Python: `name = input()
-print("Hello, " + name + "!")
-
-for i in range(3):
-    print("line", i)
+export const TEMPLATES: Record<string, string> = {
+  PYTHON: `name = input()
+print(f"Hello, {name}!")
 `,
-  JavaScript: `const name = input();
-console.log("Hello, " + name + "!");
-
-for (let i = 0; i < 3; i++) {
-  console.log("line", i);
-}
+  JAVASCRIPT: `console.log("Hello, World!");
 `,
-  "C++": `#include <iostream>
-using namespace std;
-
-int main() {
-    string name = cin;
-    cout << "Hello, " << name << "!" << endl;
-
-    for i in range(3):
-        cout << "line " << i << endl;
-}
-`,
-  Java: `public class Main {
+  JAVA: `public class Main {
     public static void main(String[] args) {
-        String name = input();
-        System.out.println("Hello, " + name + "!");
-
-        for i in range(3):
-            System.out.println("line " + i);
+        System.out.println("Hello, World!");
     }
 }
 `,
-  Go: `package main
+  C: `#include <stdio.h>
 
-import "fmt"
-
-func main() {
-    var name = input()
-    fmt.Println("Hello, " + name + "!")
-
-    for i in range(3):
-        fmt.Println("line", i)
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
 }
 `,
-  Ruby: `name = gets()
-puts "Hello, " + name + "!"
+  CPP: `#include <iostream>
+using namespace std;
 
-for i in range(3):
-    puts "line", i
-`,
-  "Plain text": `Just plain text — nothing here gets executed as code.
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}
 `,
 };
+
+/** Returns the starter snippet for a language, or an empty string if none. */
+export function getTemplate(language: string): string {
+  return TEMPLATES[language] ?? "";
+}

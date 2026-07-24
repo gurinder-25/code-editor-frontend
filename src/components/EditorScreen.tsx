@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { highlight } from "../lib/highlight";
 
-interface Props {
+interface EditorScreenProps {
   language: string;
   languages: string[];
   onLanguageChange: (lang: string) => void;
@@ -17,7 +17,7 @@ export function EditorScreen({
   code,
   onCodeChange,
   onExecute,
-}: Props) {
+}: EditorScreenProps) {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const hlRef = useRef<HTMLPreElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);

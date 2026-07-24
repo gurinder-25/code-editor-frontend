@@ -1,12 +1,12 @@
 import type { RunResult } from "../types";
 
-interface Props {
+interface OutputScreenProps {
   result: RunResult;
   onBack: () => void;
   onRunAgain: () => void;
 }
 
-export function OutputScreen({ result, onBack, onRunAgain }: Props) {
+export function OutputScreen({ result, onBack, onRunAgain }: OutputScreenProps) {
   const ok = result.status === "success";
 
   return (

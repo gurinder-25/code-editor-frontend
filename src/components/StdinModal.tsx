@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-interface Props {
+interface StdinModalProps {
   stdin: string;
   loading?: boolean;
   onStdinChange: (value: string) => void;
@@ -9,7 +9,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function StdinModal({ stdin, loading = false, onStdinChange, onRun, onSkip, onClose }: Props) {
+export function StdinModal({ stdin, loading = false, onStdinChange, onRun, onSkip, onClose }: StdinModalProps) {
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
